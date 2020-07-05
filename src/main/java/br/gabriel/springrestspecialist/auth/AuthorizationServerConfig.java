@@ -29,10 +29,12 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
             .withClient("spring-rest-specialist-web")
-            .secret(encoder.encode("web"))
-            .authorizedGrantTypes("password")
-            .scopes("write", "read")
-            .accessTokenValiditySeconds(60 * 60 * 1);
+                .secret(encoder.encode("web"))
+                .authorizedGrantTypes("password")
+                .scopes("write", "read")
+                .accessTokenValiditySeconds(60 * 60 * 1)
+            .and().withClient("resourceserver")
+                .secret(encoder.encode("resourceserver999"));
     }
     
     @Override
