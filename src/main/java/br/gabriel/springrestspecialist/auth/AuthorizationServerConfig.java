@@ -37,6 +37,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .authorizedGrantTypes(authorizedGrantTypes())
                 .scopes("write", "read")
                 .accessTokenValiditySeconds(60 * 60 * 1)
+                .refreshTokenValiditySeconds(60 * 60 * 24 * 7)
             .and().withClient("resourceserver")
                 .secret(encoder.encode("resourceserver999"));
     }
