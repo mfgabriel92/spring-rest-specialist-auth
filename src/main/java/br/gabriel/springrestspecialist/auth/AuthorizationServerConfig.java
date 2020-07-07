@@ -31,15 +31,22 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
-            .withClient("spring-rest-specialist-web")
-                .secret(encoder.encode("web"))
-                .authorizedGrantTypes(authorizedGrantTypes())
-                .scopes("write", "read")
-                .accessTokenValiditySeconds(60 * 60 * 1)
-                .refreshTokenValiditySeconds(60 * 60 * 24 * 7)
-            .and().withClient("resourceserver")
-                .secret(encoder.encode("resourceserver999"));
+        clients
+            .inMemory()
+                .withClient("spring-rest-specialist-web")
+                    .secret(encoder.encode("web"))
+                    .authorizedGrantTypes("password", "refresh_token")
+                    .scopes("write", "read")
+                    .accessTokenValiditySeconds(60 * 60 * 1)
+                    .refreshTokenValiditySeconds(60 * 60 * 24 * 7)
+            .and()
+                .withClient("spring-rest-specialist-client-credentials")
+                    .secret(encoder.encode("client-credentials"))
+                    .authorizedGrantTypes("client_credentials")
+                    .scopes("read")
+            .and()
+                .withClient("resourceserver")
+                    .secret(encoder.encode("resourceserver999"));
     }
     
     @Override
@@ -47,12 +54,5 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         endpoints
             .authenticationManager(manager)
             .userDetailsService(userDetails);
-    }
-    
-    private String[] authorizedGrantTypes() {
-        return new String[] {
-            "password", 
-            "refresh_token"
-        };
     }
 }
