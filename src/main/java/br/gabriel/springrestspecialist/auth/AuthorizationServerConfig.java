@@ -45,6 +45,12 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                     .authorizedGrantTypes("client_credentials")
                     .scopes("read")
             .and()
+                .withClient("spring-rest-specialist-authorization-code")
+                    .secret(encoder.encode("authorization-code"))
+                    .authorizedGrantTypes("authorization_code")
+                    .scopes("write", "read")
+                    .redirectUris("http://another-application")
+            .and()
                 .withClient("resourceserver")
                     .secret(encoder.encode("resourceserver999"));
     }
