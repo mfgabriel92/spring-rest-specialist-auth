@@ -11,6 +11,11 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.CompositeTokenGranter;
+import org.springframework.security.oauth2.provider.TokenGranter;
+
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("deprecation")
 @Configuration
@@ -61,11 +66,24 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .withClient("resourceserver")
                     .secret(encoder.encode("resourceserver999"));
     }
-    
+
     @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints
             .authenticationManager(manager)
-            .userDetailsService(userDetails);
+            .userDetailsService(userDetails)
+            .tokenGranter(tokenGranter(endpoints));
+    }
+
+    private TokenGranter tokenGranter(AuthorizationServerEndpointsConfigurer endpoints) {
+        PkceAuthorizationCodeTokenGranter pkceAuthorizationCodeTokenGranter = new PkceAuthorizationCodeTokenGranter(
+            endpoints.getTokenServices(),
+            endpoints.getAuthorizationCodeServices(), endpoints.getClientDetailsService(),
+            endpoints.getOAuth2RequestFactory()
+        );
+
+        List<TokenGranter> granters = Arrays.asList(pkceAuthorizationCodeTokenGranter, endpoints.getTokenGranter());
+
+        return new CompositeTokenGranter(granters);
     }
 }
