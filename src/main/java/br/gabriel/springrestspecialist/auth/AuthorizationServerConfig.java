@@ -1,6 +1,7 @@
 package br.gabriel.springrestspecialist.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,7 +21,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Autowired
     private AuthenticationManager manager;
-    
+
+    @Qualifier("userDetailsService")
     @Autowired
     private UserDetailsService userDetails;
     
@@ -37,7 +39,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                     .secret(encoder.encode("web"))
                     .authorizedGrantTypes("password", "refresh_token")
                     .scopes("write", "read")
-                    .accessTokenValiditySeconds(60 * 60 * 1)
+                    .accessTokenValiditySeconds(60 * 60)
                     .refreshTokenValiditySeconds(60 * 60 * 24 * 7)
             .and()
                 .withClient("spring-rest-specialist-client-credentials")
@@ -48,6 +50,11 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .withClient("spring-rest-specialist-authorization-code")
                     .secret(encoder.encode("authorization-code"))
                     .authorizedGrantTypes("authorization_code")
+                    .scopes("write", "read")
+                    .redirectUris("http://another-application")
+            .and()
+                .withClient("spring-rest-specialist-implicit")
+                    .authorizedGrantTypes("implicit")
                     .scopes("write", "read")
                     .redirectUris("http://another-application")
             .and()
