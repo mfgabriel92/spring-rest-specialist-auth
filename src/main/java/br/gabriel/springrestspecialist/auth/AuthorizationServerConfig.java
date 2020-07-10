@@ -1,5 +1,6 @@
 package br.gabriel.springrestspecialist.auth;
 
+import java.security.KeyPair;
 import java.util.Arrays;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,13 +21,14 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.CompositeTokenGranter;
 import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
 @SuppressWarnings("deprecation")
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
-    @Value("${srs.jwt.signing-key}")
-    private String secretKey;
+    @Value("${srs.jwt.keystore-password}")
+    private String keystorePassword;
     
     @Autowired
     private PasswordEncoder encoder;
@@ -97,7 +100,11 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Bean
     protected JwtAccessTokenConverter jwtAccessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        converter.setSigningKey(secretKey);
+        ClassPathResource jksFile = new ClassPathResource("keystores/srs.jks");
+        KeyStoreKeyFactory keyFactory = new KeyStoreKeyFactory(jksFile, keystorePassword.toCharArray());
+        KeyPair keyPair = keyFactory.getKeyPair("srs");
+
+        converter.setKeyPair(keyPair);
         
         return converter;
     }
