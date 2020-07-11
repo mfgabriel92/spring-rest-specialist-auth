@@ -1,6 +1,6 @@
 package br.gabriel.springrestspecialist.auth.core;
 
-import br.gabriel.springrestspecialist.auth.domain.TheUser;
+import br.gabriel.springrestspecialist.auth.domain.ResourceOwner;
 import br.gabriel.springrestspecialist.auth.domain.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +15,7 @@ public class TheUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        TheUser user = repository
+        ResourceOwner user = repository
             .findByEmail(email)
             .orElseThrow(() -> new UsernameNotFoundException(String.format("User with email '%s' not found", email)));
 

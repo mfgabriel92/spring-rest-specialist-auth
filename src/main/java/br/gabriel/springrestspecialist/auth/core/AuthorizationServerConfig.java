@@ -1,9 +1,5 @@
 package br.gabriel.springrestspecialist.auth.core;
 
-import java.security.KeyPair;
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,9 +15,14 @@ import org.springframework.security.oauth2.provider.CompositeTokenGranter;
 import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.approval.ApprovalStore;
 import org.springframework.security.oauth2.provider.approval.TokenApprovalStore;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
+
+import java.security.KeyPair;
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("deprecation")
 @Configuration
@@ -77,12 +78,16 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
+        TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
+        enhancerChain.setTokenEnhancers(Arrays.asList(new JwtTokenEnhancer(), jwtAccessTokenConverter()));
+
         endpoints
             .authenticationManager(manager)
             .userDetailsService(userDetails)
-            .tokenGranter(tokenGranter(endpoints))
             .accessTokenConverter(jwtAccessTokenConverter())
-            .approvalStore(approvalStore(endpoints.getTokenStore()));
+            .tokenEnhancer(enhancerChain)
+            .approvalStore(approvalStore(endpoints.getTokenStore()))
+            .tokenGranter(tokenGranter(endpoints));
     }
 
     private TokenGranter tokenGranter(AuthorizationServerEndpointsConfigurer endpoints) {

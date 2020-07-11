@@ -9,7 +9,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "t_users")
-public class TheUser {
+public class ResourceOwner {
 	@EqualsAndHashCode.Include
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
