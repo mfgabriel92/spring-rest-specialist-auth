@@ -8,9 +8,9 @@ import java.util.Collections;
 
 @Getter
 public class AuthUser extends User {
-    private Integer id;
+    private final Long id;
 
-    private String name;
+    private final String name;
 
     public AuthUser(ResourceOwner user) {
         super(user.getEmail(), user.getPassword(), Collections.emptyList());
