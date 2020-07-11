@@ -103,8 +103,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         String password = properties.getKeystorePassword();
         String alias = properties.getAlias();
 
-        System.out.print(password);
-
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         ClassPathResource jksFile = new ClassPathResource(path);
         KeyStoreKeyFactory keyFactory = new KeyStoreKeyFactory(jksFile, password.toCharArray());
