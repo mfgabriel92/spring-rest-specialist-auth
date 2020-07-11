@@ -1,17 +1,14 @@
-package br.gabriel.springrestspecialist.auth;
+package br.gabriel.springrestspecialist.auth.core;
 
 import java.security.KeyPair;
 import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -36,9 +33,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Autowired
     private AuthenticationManager manager;
 
-    @Qualifier("userDetailsService")
     @Autowired
-    private UserDetailsService userDetails;
+    private TheUserDetailsService userDetails;
 
     @Autowired
     private JwtKeystoreProperties properties;

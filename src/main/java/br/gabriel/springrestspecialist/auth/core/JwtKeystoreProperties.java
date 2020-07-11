@@ -1,4 +1,4 @@
-package br.gabriel.springrestspecialist.auth;
+package br.gabriel.springrestspecialist.auth.core;
 
 import lombok.Getter;
 import lombok.Setter;
