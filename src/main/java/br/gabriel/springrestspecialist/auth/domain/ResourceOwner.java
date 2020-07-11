@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -23,4 +25,12 @@ public class ResourceOwner {
 	
 	@Column(nullable = false)
 	private String password;
+
+	@ManyToMany
+	@JoinTable(
+		name = "t_users_groups",
+		joinColumns = @JoinColumn(name = "user_id"),
+		inverseJoinColumns = @JoinColumn(name = "group_id")
+	)
+	private List<Group> groups = new ArrayList<>();
 }
