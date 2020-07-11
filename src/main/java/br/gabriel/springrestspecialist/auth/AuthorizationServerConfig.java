@@ -27,9 +27,6 @@ import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFacto
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
-    @Value("${srs.jwt.keystore-password}")
-    private String keystorePassword;
-    
     @Autowired
     private PasswordEncoder encoder;
 
@@ -39,6 +36,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Qualifier("userDetailsService")
     @Autowired
     private UserDetailsService userDetails;
+
+    @Autowired
+    private JwtKeystoreProperties properties;
     
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
@@ -99,10 +99,16 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     
     @Bean
     protected JwtAccessTokenConverter jwtAccessTokenConverter() {
+        String path = properties.getPath();
+        String password = properties.getKeystorePassword();
+        String alias = properties.getAlias();
+
+        System.out.print(password);
+
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        ClassPathResource jksFile = new ClassPathResource("keystores/srs.jks");
-        KeyStoreKeyFactory keyFactory = new KeyStoreKeyFactory(jksFile, keystorePassword.toCharArray());
-        KeyPair keyPair = keyFactory.getKeyPair("srs");
+        ClassPathResource jksFile = new ClassPathResource(path);
+        KeyStoreKeyFactory keyFactory = new KeyStoreKeyFactory(jksFile, password.toCharArray());
+        KeyPair keyPair = keyFactory.getKeyPair(alias);
 
         converter.setKeyPair(keyPair);
         
